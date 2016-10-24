@@ -53,46 +53,14 @@ __global__ void mysgemm(int m, int n, int k, const float *A, const float *B, flo
             for (i = 0; i < TILE_SIZE; ++i) {
                 Pvalue += ds_A[ty][i] * ds_B[i][tx];
             }
-            __syncthreads();
-        } /* end of outer for loop */
-        if (Row < m && Col < n)
-            C[Row*n + Col] = Pvalue;
-    } /* end of kernel */
+        }
+        __syncthreads();
+    } /* end of outer for loop */
+    if (Row < m && Col < n)
+        C[Row*n + Col] = Pvalue;
+} /* end of kernel */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
 
 void basicSgemm(char transa, char transb, int m, int n, int k, float alpha, const float *A, int lda, const float *B, int ldb, float beta, float *C, int ldc)
 {
