@@ -56,7 +56,7 @@ __global__ void mysgemm(int m, int n, int k, const float *A, const float *B, flo
             __syncthreads();
         } /* end of outer for loop */
         if (Row < m && Col < n)
-            C[Row*m + Col] = Pvalue;
+            C[Row*n + Col] = Pvalue;
     } /* end of kernel */
 
 
