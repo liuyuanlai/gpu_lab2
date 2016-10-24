@@ -31,9 +31,10 @@ __global__ void mysgemm(int m, int n, int k, const float *A, const float *B, flo
     int bx = blockIdx.x; int by = blockIdx.y;
     int tx = threadIdx.x; int ty = threadIdx.y;
 
-    int Row = blockIdx.y*blockDim.y + threadIdx.y;
-    int Col = blockIdx.x*blockDim.x + threadIdx.x;
+    int Row = by*blockDim.y + ty;
+    int Col = bx*blockDim.x + tx;
 
+    float Pvalue = 0.0;
     int p;
     for (p = 0; p < (k-1) / TILE_SIZE + 1; ++p) {
         if(Row < m && p * TILE_SIZE+tx < k) {
