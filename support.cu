@@ -12,6 +12,7 @@
 
 #include "support.h"
 
+
 void verify(float *A, float *B, float *C, unsigned int m, unsigned int k,
   unsigned int n) {
 
