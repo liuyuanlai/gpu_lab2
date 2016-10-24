@@ -55,13 +55,11 @@ int main (int argc, char *argv[])
     C_sz = matArow*matBcol;
 
     A_h = (float*) malloc( sizeof(float)*A_sz );
-    //for (unsigned int i=0; i < A_sz; i++) { A_h[i] = (rand()%100)/100.00; }
-    for (unsigned int i=0; i < A_sz; i++) { A_h[i] = 1.0; }
+    for (unsigned int i=0; i < A_sz; i++) { A_h[i] = (rand()%100)/100.00; }
 
     B_h = (float*) malloc( sizeof(float)*B_sz );
-    //for (unsigned int i=0; i < B_sz; i++) { B_h[i] = (rand()%100)/100.00; }
-    for (unsigned int i=0; i < B_sz; i++) { B_h[i] = 1.0; }
-
+    for (unsigned int i=0; i < B_sz; i++) { B_h[i] = (rand()%100)/100.00; }
+    
     C_h = (float*) malloc( sizeof(float)*C_sz );
 
     stopTime(&timer); printf("%f s\n", elapsedTime(timer));
@@ -125,9 +123,6 @@ int main (int argc, char *argv[])
     cudaDeviceSynchronize();
     stopTime(&timer); printf("%f s\n", elapsedTime(timer));
 
-    for(unsigned int i = 0; i < matArow; i++)
-        for(unsigned int j = 0; j < matBcol; j++)
-            printf("C[%d][%d] : %f\n", i, j, C_h[i*matBcol+j]);
 
     // Verify correctness -----------------------------------------------------
 
