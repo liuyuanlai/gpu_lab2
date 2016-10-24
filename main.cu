@@ -127,7 +127,7 @@ int main (int argc, char *argv[])
 
     for(unsigned int i = 0; i < matArow; i++)
         for(unsigned int j = 0; j < matBcol; j++)
-            printf("C[%d][%d] : %f\n", i, j, C[i*matBcol+j]);
+            printf("C[%d][%d] : %f\n", i, j, C_h[i*matBcol+j]);
 
     // Verify correctness -----------------------------------------------------
 
