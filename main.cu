@@ -22,14 +22,14 @@ int main (int argc, char *argv[])
     printf("\nSetting up the problem..."); fflush(stdout);
     startTime(&timer);
 
-    float *A_h, *B_h, *C_h;
-    float *A_d, *B_d, *C_d;
+    float *A_h, *B_h, *C_h, *s_C_h;
+    float *A_d, *B_d, *C_d, *s_C_d;
     size_t A_sz, B_sz, C_sz;
     unsigned matArow, matAcol;
     unsigned matBrow, matBcol;
     dim3 dim_grid, dim_block;
 
-    if (argc == 1) {
+    /*if (argc == 1) {
         matArow = 1000;
         matAcol = matBrow = 1000;
         matBcol = 1000;
@@ -48,7 +48,11 @@ int main (int argc, char *argv[])
       "\n    Usage: ./sgemm-tiled <m> <k> <n>    # A: m x k, B: k x n, C: m x n"
       "\n");
         exit(0);
-    }
+    }*/
+    int matDim;
+    for(matDim = 100; matDim <= 200; matDim += 100){
+
+    matArow = matAcol = matBrow = matBcol = matDim;
 
     A_sz = matArow*matAcol;
     B_sz = matBrow*matBcol;
@@ -61,6 +65,7 @@ int main (int argc, char *argv[])
     for (unsigned int i=0; i < B_sz; i++) { B_h[i] = (rand()%100)/100.00; }
     
     C_h = (float*) malloc( sizeof(float)*C_sz );
+    s_C_h = (float*) malloc( sizeof(float)*C_sz );
 
     stopTime(&timer); printf("%f s\n", elapsedTime(timer));
     printf("    A: %u x %u\n    B: %u x %u\n    C: %u x %u\n", matArow, matAcol,
@@ -75,6 +80,7 @@ int main (int argc, char *argv[])
     cudaMalloc((void **)&A_d, sizeof(float)*A_sz);
     cudaMalloc((void **)&B_d, sizeof(float)*B_sz);  
     cudaMalloc((void **)&C_d, sizeof(float)*C_sz);
+    cudaMalloc((void **)&s_C_d, sizeof(float)*C_sz);
 
 
 
@@ -94,6 +100,7 @@ int main (int argc, char *argv[])
     cudaMemcpy(A_d, A_h, sizeof(float)*A_sz, cudaMemcpyHostToDevice);
     cudaMemcpy(B_d, B_h, sizeof(float)*B_sz, cudaMemcpyHostToDevice);
     cudaMemcpy(C_d, C_h, sizeof(float)*C_sz, cudaMemcpyHostToDevice);
+    cudaMemcpy(s_C_d, s_C_h, sizeof(float)*C_sz, cudaMemcpyHostToDevice);
 
 
 
@@ -110,6 +117,15 @@ int main (int argc, char *argv[])
 	if(cuda_ret != cudaSuccess) FATAL("Unable to launch kernel");
     stopTime(&timer); printf("%f s\n", elapsedTime(timer));
 
+    printf("Launching simple matrix multiplication kernel..."); fflush(stdout);
+    startTime(&timer);
+    s_basicSgemm('N', 'N', matArow, matBcol, matBrow, 1.0f, \
+        A_d, matArow, B_d, matBrow, 0.0f, s_C_d, matBrow);
+
+    cuda_ret = cudaDeviceSynchronize();
+    if(cuda_ret != cudaSuccess) FATAL("Unable to launch kernel");
+    stopTime(&timer); printf("%f s\n", elapsedTime(timer));
+
     // Copy device variables from host ----------------------------------------
 
     printf("Copying data from device to host..."); fflush(stdout);
@@ -117,6 +133,7 @@ int main (int argc, char *argv[])
 
     //INSERT CODE HERE
     cudaMemcpy(C_h, C_d, sizeof(float)*C_sz, cudaMemcpyDeviceToHost);
+    cudaMemcpy(s_C_h, s_C_d, sizeof(float)*C_sz, cudaMemcpyDeviceToHost);
 
 
 
@@ -136,9 +153,12 @@ int main (int argc, char *argv[])
     free(A_h);
     free(B_h);
     free(C_h);
+    free(s_C_h);
 
     //INSERT CODE HERE
-    cudaFree(A_d); cudaFree(B_d); cudaFree (C_d);
+    cudaFree(A_d); cudaFree(B_d); cudaFree (C_d); cudaFree (s_C_d);
+
+    }
 
 
 
