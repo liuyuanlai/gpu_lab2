@@ -129,7 +129,7 @@ __global__ void s_mysgemm(int m, int n, int k, const float *A, const float *B, f
     }
 }
 
-    void s_basicSgemm(char transa, char transb, int m, int n, int k, float alpha, const float *A, int lda, const float *B, int ldb, float beta, float *C, int ldc)
+void s_basicSgemm(char transa, char transb, int m, int n, int k, float alpha, const float *A, int lda, const float *B, int ldb, float beta, float *C, int ldc)
 {
     if ((transa != 'N') && (transa != 'n')) {
     printf("unsupported value of 'transa'\n");
